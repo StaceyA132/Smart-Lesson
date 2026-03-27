@@ -7,7 +7,7 @@ import { fetchUsers, fetchLessons, fetchEngagementEvents, fetchExperiments, addU
   const [addingUser, setAddingUser] = useState(false);
   const [addingLesson, setAddingLesson] = useState(false);
 
-const Dashboard: React.FC = () => {
+const App: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [lessons, setLessons] = useState<any[]>([]);
   const [engagementEvents, setEngagementEvents] = useState<any[]>([]);
@@ -227,4 +227,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default App;
