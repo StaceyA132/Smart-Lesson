@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUsers, fetchLessons } from './api';
+import { fetchUsers, fetchLessons, fetchEngagementEvents, fetchExperiments } from './api';
 
 const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [lessons, setLessons] = useState<any[]>([]);
+  const [engagementEvents, setEngagementEvents] = useState<any[]>([]);
+  const [experiments, setExperiments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([fetchUsers(), fetchLessons()])
-      .then(([usersData, lessonsData]) => {
+    Promise.all([
+      fetchUsers(),
+      fetchLessons(),
+      fetchEngagementEvents(),
+      fetchExperiments()
+    ])
+      .then(([usersData, lessonsData, eventsData, experimentsData]) => {
         setUsers(usersData);
         setLessons(lessonsData);
+        setEngagementEvents(eventsData);
+        setExperiments(experimentsData);
         setLoading(false);
       })
       .catch((err) => {
@@ -69,11 +78,49 @@ const Dashboard: React.FC = () => {
         </section>
         <section style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #e2e8f0', padding: 24 }}>
           <h2 style={{ color: '#2b6cb0', fontSize: 24 }}>Engagement Stats</h2>
-          <div style={{ color: '#718096' }}>[Engagement stats and charts will appear here]</div>
+          {loading ? (
+            <div style={{ color: '#718096' }}>Loading...</div>
+          ) : error ? (
+            <div style={{ color: 'red' }}>{error}</div>
+          ) : engagementEvents.length === 0 ? (
+            <div style={{ color: '#718096' }}>No engagement events found.</div>
+          ) : (
+            <ul style={{ color: '#2d3748', paddingLeft: 0, listStyle: 'none' }}>
+              {engagementEvents.map((event) => (
+                <li key={event.id} style={{ marginBottom: 8 }}>
+                  User <strong>{event.user_id}</strong> received lesson <strong>{event.lesson_id}</strong> via <strong>{event.channel}</strong>
+                  {event.interacted && (
+                    <span style={{ color: '#38a169', marginLeft: 8 }}>
+                      (interacted)
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
         <section style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #e2e8f0', padding: 24 }}>
           <h2 style={{ color: '#2b6cb0', fontSize: 24 }}>Experiment Results</h2>
-          <div style={{ color: '#718096' }}>[Experiment results and analytics will appear here]</div>
+          {loading ? (
+            <div style={{ color: '#718096' }}>Loading...</div>
+          ) : error ? (
+            <div style={{ color: 'red' }}>{error}</div>
+          ) : experiments.length === 0 ? (
+            <div style={{ color: '#718096' }}>No experiments found.</div>
+          ) : (
+            <ul style={{ color: '#2d3748', paddingLeft: 0, listStyle: 'none' }}>
+              {experiments.map((exp) => (
+                <li key={exp.id} style={{ marginBottom: 8 }}>
+                  <strong>{exp.name}</strong> — {exp.strategy}
+                  {exp.result && (
+                    <span style={{ color: '#3182ce', marginLeft: 8 }}>
+                      ({exp.result})
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       </main>
     </div>
