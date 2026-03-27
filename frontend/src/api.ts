@@ -1,3 +1,22 @@
+export async function addUser(user: { name: string; email: string }) {
+  const res = await fetch(`${API_BASE}/users/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  });
+  if (!res.ok) throw new Error('Failed to add user');
+  return res.json();
+}
+
+export async function addLesson(lesson: { title: string; content: string }) {
+  const res = await fetch(`${API_BASE}/lessons/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(lesson),
+  });
+  if (!res.ok) throw new Error('Failed to add lesson');
+  return res.json();
+}
 // API utility for Smart Lesson frontend
 const API_BASE = 'http://localhost:8000';
 
